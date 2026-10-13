@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Empleo y salario en el correo santafesino</title>
+<meta name="description" content="Empleo registrado y salario real en Santa Fe: total de la economía privada y servicios de correos. Datos SIPA-OEDE e IPC Santa Fe.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: light;
+    --paper: #fbfbfa;
+    --surface: #ffffff;
+    --surface-2: #f2f3f5;
+    --ink: #14161a;
+    --ink-secondary: #474b54;
+    --ink-muted: #767b85;
+    --line: #e2e4e8;
+    --line-strong: #cdd0d6;
+    --brand: #0051fe;
+    --brand-soft: #e8eeff;
+    --s1: #2a78d6;
+    --s2: #eb6834;
+    --s3: #1baf7a;
+    --s4: #eda100;
+    --s5: #e87ba4;
+    --band: rgba(235, 104, 52, 0.10);
+    --shadow: 0 1px 2px rgba(20, 22, 26, 0.04), 0 8px 24px -12px rgba(20, 22, 26, 0.12);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --paper: #0f1115; --surface: #15171c; --surface-2: #1c1f25;
+      --ink: #f1f2f4; --ink-secondary: #c7cad1; --ink-muted: #8b8f98;
+      --line: #2a2d34; --line-strong: #383c45;
+      --brand: #4d84ff; --brand-soft: #17223f;
+      --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181;
+      --band: rgba(217, 89, 38, 0.16);
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --paper: #0f1115; --surface: #15171c; --surface-2: #1c1f25;
+    --ink: #f1f2f4; --ink-secondary: #c7cad1; --ink-muted: #8b8f98;
+    --line: #2a2d34; --line-strong: #383c45;
+    --brand: #4d84ff; --brand-soft: #17223f;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181;
+    --band: rgba(217, 89, 38, 0.16);
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-snap-type: y mandatory; scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--paper); color: var(--ink);
+    font-family: "Public Sans", "Segoe UI", -apple-system, sans-serif;
+    font-size: 17px; line-height: 1.6;
+  }
+  ::selection { background: var(--brand-soft); }
+  a { color: var(--brand); }
+
+  .progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--brand); width: 0; z-index: 20; transition: width .25s; }
+  .topbar {
+    position: fixed; top: 3px; left: 0; right: 0; z-index: 15;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px clamp(16px, 4vw, 40px); font-size: 13px; color: var(--ink-muted);
+    background: linear-gradient(var(--paper) 60%, transparent);
+  }
+  .topbar b { color: var(--ink-secondary); font-weight: 600; }
+  .controls { display: flex; gap: 6px; align-items: center; }
+  .controls button {
+    font: inherit; font-size: 13px; color: var(--ink-secondary); background: var(--surface);
+    border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; cursor: pointer;
+  }
+  .controls button:hover { border-color: var(--line-strong); color: var(--ink); }
+
+  section.slide {
+    min-height: 100vh; min-height: 100svh; scroll-snap-align: start;
+    display: flex; align-items: center;
+    padding: 64px clamp(16px, 4vw, 40px) 40px;
+    border-bottom: 1px solid var(--line);
+  }
+  .frame { width: 100%; max-width: 1120px; margin: 0 auto; }
+  .kicker { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--brand); font-weight: 600; margin: 0 0 12px; }
+  h1, h2 { font-family: "Fraunces", Georgia, serif; font-weight: 600; letter-spacing: -0.01em; text-wrap: balance; margin: 0 0 18px; }
+  h1 { font-size: clamp(2.2rem, 6vw, 4rem); line-height: 1.05; }
+  h2 { font-size: clamp(1.6rem, 3.6vw, 2.5rem); line-height: 1.12; }
+  p { margin: 0 0 1em; max-width: 62ch; color: var(--ink-secondary); }
+  p.lead { font-size: clamp(1.02rem, 1.6vw, 1.15rem); color: var(--ink); }
+  .quote {
+    font-family: "Fraunces", Georgia, serif; font-style: italic; font-weight: 500;
+    font-size: clamp(1.25rem, 2.6vw, 1.7rem); line-height: 1.3; color: var(--ink);
+    border-left: 3px solid var(--brand); padding: 4px 0 4px 18px; margin: 26px 0 0; max-width: 34ch;
+  }
+  .grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(20px, 4vw, 48px); align-items: center; }
+  .grid.even { grid-template-columns: 1fr 1fr; }
+  @media (max-width: 860px) { .grid, .grid.even { grid-template-columns: 1fr; } }
+  ul.points { margin: 0 0 1em; padding: 0; list-style: none; max-width: 60ch; }
+  ul.points li { position: relative; padding-left: 18px; margin-bottom: 10px; color: var(--ink-secondary); }
+  ul.points li::before { content: ""; position: absolute; left: 0; top: .62em; width: 7px; height: 7px; border-radius: 50%; background: var(--brand); }
+  ul.points b, p b { color: var(--ink); font-weight: 600; }
+
+  ol.index { list-style: none; counter-reset: idx; padding: 0; margin: 0; }
+  ol.index li { counter-increment: idx; display: flex; gap: 14px; align-items: baseline; padding: 10px 0; border-bottom: 1px solid var(--line); color: var(--ink-secondary); }
+  ol.index li::before { content: counter(idx, decimal-leading-zero); font-family: "Fraunces", Georgia, serif; font-weight: 600; color: var(--brand); min-width: 2ch; }
+  ol.index li b { color: var(--ink); font-weight: 600; }
+
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px 18px 12px; box-shadow: var(--shadow); }
+  .card h3 { font-size: 14px; font-weight: 600; margin: 0 0 2px; color: var(--ink); }
+  .card .sub { font-size: 12.5px; color: var(--ink-muted); margin: 0 0 8px; }
+  .chart { width: 100%; position: relative; }
+  .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; color: var(--ink-secondary); margin: 2px 0 6px; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; }
+  .note { font-size: 12px; color: var(--ink-muted); margin: 8px 0 0; max-width: none; }
+
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin: 6px 0 18px; }
+  .tile { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+  .tile .label { font-size: 13px; color: var(--ink-muted); margin-bottom: 4px; }
+  .tile .value { font-size: clamp(1.6rem, 3.4vw, 2.3rem); font-weight: 600; line-height: 1.1; color: var(--ink); font-variant-numeric: proportional-nums; white-space: nowrap; }
+  .tile .delta { font-size: 13px; color: var(--ink-secondary); margin-top: 4px; }
+
+  /* espacio reservado para las slides de introducción */
+  .placeholder {
+    border: 2px dashed var(--line-strong); border-radius: 14px; min-height: 300px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+    color: var(--ink-muted); font-size: 14px; text-align: center; padding: 24px; background: var(--surface-2);
+  }
+  .placeholder b { color: var(--ink-secondary); font-size: 15px; }
+  .tag { display: inline-block; font-size: 12px; font-weight: 600; color: var(--ink-muted); border: 1px solid var(--line-strong); border-radius: 999px; padding: 2px 10px; margin-bottom: 14px; }
+
+  details.datos { margin-top: 8px; font-size: 13px; }
+  details.datos summary { cursor: pointer; color: var(--ink-muted); }
+  details.datos .tw { max-height: 220px; overflow: auto; margin-top: 6px; }
+  details.datos table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+  details.datos th, details.datos td { padding: 3px 8px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+  details.datos th:first-child, details.datos td:first-child { text-align: left; }
+  details.datos th { color: var(--ink-muted); font-weight: 600; position: sticky; top: 0; background: var(--surface); }
+
+  .tip {
+    position: absolute; pointer-events: none; z-index: 5; min-width: 150px;
+    background: var(--surface); border: 1px solid var(--line-strong); border-radius: 10px;
+    box-shadow: var(--shadow); padding: 8px 10px; font-size: 12.5px; color: var(--ink); display: none;
+  }
+  .tip .t { font-weight: 600; margin-bottom: 4px; }
+  .tip .r { display: flex; justify-content: space-between; gap: 14px; color: var(--ink-secondary); }
+  .tip .r i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+  .tip .r b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  ol.sources { padding-left: 20px; color: var(--ink-secondary); font-size: 14px; max-width: 80ch; }
+  ol.sources li { margin-bottom: 6px; }
+  .cover h1 span { color: var(--brand); }
+  .byline { font-size: 14px; color: var(--ink-muted); margin-top: 28px; }
+  .hint { font-size: 12.5px; color: var(--ink-muted); margin-top: 26px; }
+
+  #counter { white-space: nowrap; }
+  @media (max-width: 860px) {
+    html { scroll-snap-type: none; }
+    .topbar .sub-title { display: none; }
+    section.slide { padding-top: 72px; min-height: auto; padding-bottom: 56px; }
+    section.slide.cover { min-height: 100svh; }
+  }
+  @media print {
+    html { scroll-snap-type: none; }
+    .progress, .topbar { display: none; }
+    section.slide { min-height: auto; page-break-after: always; border: 0; padding: 24px; }
+    details.datos { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="topbar">
+  <div><b>Correos Santa Fe</b><span class="sub-title"> · Empleo y salario real</span></div>
+  <div class="controls">
+    <span id="counter">1 / 1</span>
+    <button id="prev" aria-label="Slide anterior">&larr;</button>
+    <button id="next" aria-label="Slide siguiente">&rarr;</button>
+    <button id="theme" aria-label="Cambiar tema">◐</button>
+  </div>
+</div>
+
+<!-- 1. Portada -->
+<section class="slide cover" id="s-portada">
+  <div class="frame">
+    <p class="kicker">Informe para el Sindicato de Correos de Santa Fe · Octubre 2026</p>
+    <h1>Empleo y salario en <span>el correo santafesino</span></h1>
+    <div class="grid even" style="align-items:start">
+      <div>
+        <p class="lead">Cuántos trabajadores registrados hay en la provincia y en el sector correos, y cuánto rinde hoy su salario frente a la inflación.</p>
+        <p>Los datos de empleo y remuneraciones son del SIPA (asalariados registrados del sector privado) y el salario real se calcula con el IPC de Santa Fe, a pesos de junio de 2026.</p>
+        <p class="hint">Usá las flechas del teclado o deslizá para avanzar.</p>
+      </div>
+      <ol class="index">
+        <li><span><b>Panorama del empleo</b>: informalidad, sobreocupación y salario real</span></li>
+        <li><span><b>Empleo registrado</b> en Santa Fe y en correos</span></li>
+        <li><span><b>Salario real</b> en Santa Fe y en correos</span></li>
+        <li><span><b>Síntesis</b> y notas metodológicas</span></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- =====================================================================
+     2. PANORAMA DEL EMPLEO — ESPACIO RESERVADO
+     Reemplazar cada <section class="slide intro"> por la slide definitiva.
+     Se pueden agregar o quitar secciones: el contador se ajusta solo.
+     ===================================================================== -->
+<section class="slide intro" id="s-intro-1">
+  <div class="frame grid">
+    <div>
+      <span class="tag">En elaboración</span>
+      <p class="kicker">Panorama del empleo</p>
+      <h2>Informalidad</h2>
+      <p class="lead">Espacio reservado para la slide sobre informalidad laboral.</p>
+    </div>
+    <div class="placeholder"><b>Slide a incorporar</b>Gráfico y texto sobre informalidad</div>
+  </div>
+</section>
+
+<section class="slide intro" id="s-intro-2">
+  <div class="frame grid">
+    <div>
+      <span class="tag">En elaboración</span>
+      <p class="kicker">Panorama del empleo</p>
+      <h2>Sobreocupación</h2>
+      <p class="lead">Espacio reservado para la slide sobre sobreocupación y pluriempleo.</p>
+    </div>
+    <div class="placeholder"><b>Slide a incorporar</b>Gráfico y texto sobre sobreocupación</div>
+  </div>
+</section>
+
+<section class="slide intro" id="s-intro-3">
+  <div class="frame grid">
+    <div>
+      <span class="tag">En elaboración</span>
+      <p class="kicker">Panorama del empleo</p>
+      <h2>Salario real</h2>
+      <p class="lead">Espacio reservado para la slide sobre el poder adquisitivo a nivel nacional.</p>
+    </div>
+    <div class="placeholder"><b>Slide a incorporar</b>Gráfico y texto sobre salario real</div>
+  </div>
+</section>
+<!-- ============ fin del espacio reservado ============ -->
+
+<!-- 3. Empleo total Santa Fe -->
+<section class="slide" id="s-emp-total">
+  <div class="frame grid">
+    <div>
+      <p class="kicker">Empleo registrado · Santa Fe</p>
+      <h2>La provincia perdió empleo privado registrado</h2>
+      <div class="tiles">
+        <div class="tile"><div class="label" id="et-lab">Asalariados privados, 1° trim. 2026</div><div class="value" id="et-v">542.281</div><div class="delta" id="et-d"></div></div>
+        <div class="tile"><div class="label" id="et-loss-lab">Puestos menos que en el 1° trim. 2023</div><div class="value" id="et-loss">−10.625</div><div class="delta" id="et-loss-d"></div></div>
+      </div>
+      <p class="lead">El empleo privado registrado tocó su máximo histórico en el <b id="et-pico">4° trimestre de 2023</b>. Desde entonces cae: en el <span id="et-ult">1° trimestre de 2026</span> hay <b id="et-yoy">10.625</b> asalariados menos que en el mismo trimestre de 2023.</p>
+    </div>
+    <div class="card">
+      <h3>Asalariados registrados del sector privado en Santa Fe</h3>
+      <p class="sub">Puestos de trabajo por trimestre</p>
+      <div class="chart" id="ch-et"></div>
+      <p class="note">El empleo tiene estacionalidad: para comparar conviene mirar el mismo trimestre de cada año.</p>
+      <details class="datos"><summary>Ver datos</summary><div class="tw" id="tb-et"></div></details>
+    </div>
+  </div>
+</section>
+
+<!-- 4. Empleo correos -->
+<section class="slide" id="s-emp-correos">
+  <div class="frame grid">
+    <div>
+      <p class="kicker">Empleo registrado · Correos</p>
+      <h2>El empleo en correos se redujo a la mitad</h2>
+      <p class="lead">Entre 2010 y 2021 la rama de servicios de correos sostuvo entre <b>830 y 975</b> asalariados registrados en la provincia. A comienzos de 2022 la cifra se desplomó a <b id="ec-22">493</b> y siguió bajando hasta <b id="ec-min">435</b> en el <span id="ec-min-q">2° trimestre de 2025</span>.</p>
+      <p>En los últimos trimestres hay una recuperación: <b id="ec-ult">531</b> puestos en el <span id="ec-ult-q">1° trimestre de 2026</span>, <b id="ec-rec">22%</b> más que en el piso. Aun así, el sector tiene <b id="ec-vs">41%</b> menos trabajadores que el promedio 2010-2021.</p>
+    </div>
+    <div class="card">
+      <h3>Asalariados registrados en servicios de correos, Santa Fe</h3>
+      <p class="sub">Rama 6410 del CIIU, sector privado, puestos por trimestre</p>
+      <div class="chart" id="ch-ec"></div>
+      <p class="note">El salto del 1° trimestre de 2022 (de 872 a 493 puestos en un trimestre) puede reflejar el cierre, la reclasificación o el cambio de domicilio fiscal de una empresa grande. Al tratarse del sector privado, no incluye al Correo Oficial (Correo Argentino), empresa estatal desde 2003.</p>
+      <details class="datos"><summary>Ver datos</summary><div class="tw" id="tb-ec"></div></details>
+    </div>
+  </div>
+</section>
+
+<!-- 5. Salario real total -->
+<section class="slide" id="s-sal-total">
+  <div class="frame grid">
+    <div>
+      <p class="kicker">Salario real · Santa Fe</p>
+      <h2>Un salario que no recupera lo perdido</h2>
+      <p class="lead">El salario real promedio del sector privado registrado en Santa Fe está <b id="rt-vs15">14%</b> por debajo de su máximo de <span id="rt-pico">noviembre de 2015</span>.</p>
+      <p>Tras la devaluación de diciembre de 2023 cayó <b id="rt-caida">8%</b> en pocos meses. Se recuperó a lo largo de 2024, pero desde mediados de 2025 está estancado: en <span id="rt-ult">junio de 2026</span> es prácticamente igual al de <span>noviembre de 2023</span> (<b id="rt-vs23">−1%</b>).</p>
+    </div>
+    <div class="card">
+      <h3>Salario real promedio del sector privado registrado en Santa Fe</h3>
+      <p class="sub">Remuneración por todo concepto, en pesos de junio de 2026, promedio de 6 meses</p>
+      <div class="chart" id="ch-rt"></div>
+      <details class="datos"><summary>Ver datos</summary><div class="tw" id="tb-rt"></div></details>
+    </div>
+  </div>
+</section>
+
+<!-- 6. Salario real correos -->
+<section class="slide" id="s-sal-correos">
+  <div class="frame grid">
+    <div>
+      <p class="kicker">Salario real · Correos</p>
+      <h2>En correos, la recuperación ya se está perdiendo</h2>
+      <p class="lead">El salario real en correos está <b id="rc-vs14">23%</b> por debajo de su máximo de <span id="rc-pico">marzo de 2014</span>.</p>
+      <p>En <span id="rc-min-p">2022</span> tocó su nivel más bajo desde 2008. Entre 2024 y mediados de 2025 recuperó terreno, pero desde <span id="rc-max25-p">junio de 2025</span> volvió a caer: <b id="rc-caida25">−9%</b> en un año.</p>
+    </div>
+    <div class="card">
+      <h3>Salario real promedio en servicios de correos, Santa Fe</h3>
+      <p class="sub">Remuneración por todo concepto, en pesos de junio de 2026, promedio de 6 meses</p>
+      <div class="chart" id="ch-rc"></div>
+      <details class="datos"><summary>Ver datos</summary><div class="tw" id="tb-rc"></div></details>
+    </div>
+  </div>
+</section>
+
+<!-- 7. Comparación -->
+<section class="slide" id="s-comp">
+  <div class="frame grid">
+    <div>
+      <p class="kicker">Correos frente al promedio</p>
+      <h2>La ventaja salarial del correo se achicó</h2>
+      <div class="tiles">
+        <div class="tile"><div class="label">Diferencia de salario correos vs. promedio, <span id="pr-ult-p">jun-26</span></div><div class="value" id="pr-ult">+12%</div><div class="delta" id="pr-hist"></div></div>
+      </div>
+      <p class="lead">Un trabajador de correos ganaba en <span id="pr-p0">2011</span> un <b id="pr-v0">27%</b> más que el promedio del sector privado santafesino. Hacia fines de <b>2022</b> esa diferencia había desaparecido.</p>
+      <p>Hoy la brecha volvió a abrirse, pero sigue lejos de los niveles de la década pasada.</p>
+    </div>
+    <div class="card">
+      <h3>Salario real: correos y total del sector privado</h3>
+      <p class="sub">En pesos de junio de 2026, promedio de 6 meses</p>
+      <div class="legend" id="lg-comp"></div>
+      <div class="chart" id="ch-comp"></div>
+      <details class="datos"><summary>Ver datos</summary><div class="tw" id="tb-comp"></div></details>
+    </div>
+  </div>
+</section>
+
+<!-- 8. Síntesis y metodología -->
+<section class="slide" id="s-sintesis">
+  <div class="frame grid even" style="align-items:start">
+    <div>
+      <p class="kicker">Síntesis</p>
+      <h2>Menos trabajadores y salarios que no despegan</h2>
+      <ul class="points">
+        <li>Santa Fe tiene <b id="sx-et">10.625</b> asalariados privados registrados menos que a comienzos de 2023.</li>
+        <li>El empleo en correos se redujo a la mitad entre 2021 y 2025. Aun con el repunte reciente, tiene <b id="sx-ec">41%</b> menos trabajadores que el promedio 2010-2021.</li>
+        <li>El salario real de la provincia está en el mismo nivel que en noviembre de 2023 y <b id="sx-rt">14%</b> debajo de 2015.</li>
+        <li>En correos, el salario real cae desde mediados de 2025 y la ventaja frente al promedio provincial es menos de la mitad que en 2011.</li>
+      </ul>
+    </div>
+    <div>
+      <p class="kicker">Notas metodológicas y fuentes</p>
+      <ol class="sources">
+        <li><b>Empleo:</b> asalariados registrados del sector privado, SIPA. Ministerio de Capital Humano, Observatorio de Empleo y Dinámica Empresarial (OEDE). Total provincial y rama 6410 "Servicios de correos" del CIIU rev. 3.</li>
+        <li><b>Remuneraciones:</b> remuneración promedio por todo concepto de los asalariados registrados del sector privado, SIPA-OEDE, mensual. Total Santa Fe y rama 6410.</li>
+        <li><b>Salario real:</b> remuneración nominal deflactada por el IPC de Santa Fe (IPEC) y expresada en pesos de junio de 2026. Se usa el promedio móvil de 6 meses: cada ventana incluye un mes con medio aguinaldo, lo que suaviza los picos de junio y diciembre.</li>
+        <li><b>Secreto estadístico:</b> el total provincial incluye ramas que el OEDE no publica individualmente.</li>
+      </ol>
+      <p class="byline">Elaborado por Fermín Oyarzabal</p>
+    </div>
+  </div>
+</section>
+
+<div class="tip" id="tip"></div>
+
+<script>
+const DATA = {"base":"2026-06","emp_total":[["2005-Q1",384206],["2005-Q2",394971],["2005-Q3",403838],["2005-Q4",421180],["2006-Q1",424635],["2006-Q2",431314],["2006-Q3",435900],["2006-Q4",449861],["2007-Q1",450216],["2007-Q2",456956],["2007-Q3",464975],["2007-Q4",479508],["2008-Q1",481881],["2008-Q2",486685],["2008-Q3",488122],["2008-Q4",490200],["2009-Q1",476857],["2009-Q2",471250],["2009-Q3",470064],["2009-Q4",478361],["2010-Q1",478043],["2010-Q2",483621],["2010-Q3",486439],["2010-Q4",496846],["2011-Q1",498874],["2011-Q2",508313],["2011-Q3",513360],["2011-Q4",521424],["2012-Q1",516004],["2012-Q2",517665],["2012-Q3",513748],["2012-Q4",518387],["2013-Q1",517427],["2013-Q2",522064],["2013-Q3",520314],["2013-Q4",524648],["2014-Q1",518263],["2014-Q2",520897],["2014-Q3",521184],["2014-Q4",525718],["2015-Q1",523121],["2015-Q2",530276],["2015-Q3",530495],["2015-Q4",533052],["2016-Q1",528416],["2016-Q2",528614],["2016-Q3",526980],["2016-Q4",532839],["2017-Q1",532538],["2017-Q2",535728],["2017-Q3",536847],["2017-Q4",544841],["2018-Q1",541465],["2018-Q2",541856],["2018-Q3",540044],["2018-Q4",537841],["2019-Q1",532492],["2019-Q2",532369],["2019-Q3",529912],["2019-Q4",527091],["2020-Q1",516466],["2020-Q2",501904],["2020-Q3",502053],["2020-Q4",508341],["2021-Q1",514608],["2021-Q2",519819],["2021-Q3",522360],["2021-Q4",532210],["2022-Q1",535466],["2022-Q2",544458],["2022-Q3",546684],["2022-Q4",554121],["2023-Q1",552906],["2023-Q2",557590],["2023-Q3",557984],["2023-Q4",558836],["2024-Q1",548892],["2024-Q2",544708],["2024-Q3",542872],["2024-Q4",547881],["2025-Q1",543167],["2025-Q2",547007],["2025-Q3",546338],["2025-Q4",547309],["2026-Q1",542281]],"emp_correos":[["2005-Q1",740],["2005-Q2",735],["2005-Q3",695],["2005-Q4",695],["2006-Q1",714],["2006-Q2",738],["2006-Q3",764],["2006-Q4",773],["2007-Q1",781],["2007-Q2",818],["2007-Q3",832],["2007-Q4",830],["2008-Q1",832],["2008-Q2",845],["2008-Q3",880],["2008-Q4",863],["2009-Q1",862],["2009-Q2",883],["2009-Q3",902],["2009-Q4",902],["2010-Q1",903],["2010-Q2",886],["2010-Q3",876],["2010-Q4",894],["2011-Q1",905],["2011-Q2",898],["2011-Q3",926],["2011-Q4",933],["2012-Q1",885],["2012-Q2",879],["2012-Q3",881],["2012-Q4",880],["2013-Q1",891],["2013-Q2",882],["2013-Q3",859],["2013-Q4",852],["2014-Q1",860],["2014-Q2",874],["2014-Q3",919],["2014-Q4",919],["2015-Q1",929],["2015-Q2",935],["2015-Q3",926],["2015-Q4",917],["2016-Q1",918],["2016-Q2",933],["2016-Q3",907],["2016-Q4",909],["2017-Q1",896],["2017-Q2",933],["2017-Q3",970],["2017-Q4",975],["2018-Q1",971],["2018-Q2",942],["2018-Q3",944],["2018-Q4",926],["2019-Q1",911],["2019-Q2",955],["2019-Q3",855],["2019-Q4",833],["2020-Q1",835],["2020-Q2",829],["2020-Q3",829],["2020-Q4",857],["2021-Q1",894],["2021-Q2",849],["2021-Q3",899],["2021-Q4",872],["2022-Q1",493],["2022-Q2",511],["2022-Q3",538],["2022-Q4",521],["2023-Q1",528],["2023-Q2",510],["2023-Q3",478],["2023-Q4",465],["2024-Q1",464],["2024-Q2",456],["2024-Q3",443],["2024-Q4",443],["2025-Q1",445],["2025-Q2",435],["2025-Q3",466],["2025-Q4",517],["2026-Q1",531]],"real_total":[["2002-06",1222438],["2002-07",1129237],["2002-08",1054646],["2002-09",1001177],["2002-10",974954],["2002-11",959567],["2002-12",961875],["2003-01",967586],["2003-02",969299],["2003-03",971373],["2003-04",972174],["2003-05",976956],["2003-06",972979],["2003-07",973501],["2003-08",984981],["2003-09",1002268],["2003-10",1022784],["2003-11",1039044],["2003-12",1071464],["2004-01",1104708],["2004-02",1129417],["2004-03",1151528],["2004-04",1164941],["2004-05",1177321],["2004-06",1188252],["2004-07",1177475],["2004-08",1167760],["2004-09",1157484],["2004-10",1154343],["2004-11",1152795],["2004-12",1162175],["2005-01",1187802],["2005-02",1202058],["2005-03",1216495],["2005-04",1226413],["2005-05",1240580],["2005-06",1248397],["2005-07",1238547],["2005-08",1249265],["2005-09",1263023],["2005-10",1280145],["2005-11",1294178],["2005-12",1323875],["2006-01",1354090],["2006-02",1363531],["2006-03",1375430],["2006-04",1382829],["2006-05",1392884],["2006-06",1398748],["2006-07",1397628],["2006-08",1418251],["2006-09",1430765],["2006-10",1447569],["2006-11",1456968],["2006-12",1476870],["2007-01",1501984],["2007-02",1501913],["2007-03",1507755],["2007-04",1512338],["2007-05",1525488],["2007-06",1537175],["2007-07",1531060],["2007-08",1548299],["2007-09",1558345],["2007-10",1578857],["2007-11",1592410],["2007-12",1623528],["2008-01",1657976],["2008-02",1675948],["2008-03",1688523],["2008-04",1693859],["2008-05",1703524],["2008-06",1693827],["2008-07",1678694],["2008-08",1679884],["2008-09",1694535],["2008-10",1707107],["2008-11",1707486],["2008-12",1739747],["2009-01",1760230],["2009-02",1766181],["2009-03",1764688],["2009-04",1763853],["2009-05",1772879],["2009-06",1778287],["2009-07",1772465],["2009-08",1778026],["2009-09",1788491],["2009-10",1800176],["2009-11",1804843],["2009-12",1812553],["2010-01",1831339],["2010-02",1831429],["2010-03",1834931],["2010-04",1835440],["2010-05",1838786],["2010-06",1843998],["2010-07",1839326],["2010-08",1855265],["2010-09",1870113],["2010-10",1883651],["2010-11",1897042],["2010-12",1916577],["2011-01",1941671],["2011-02",1951389],["2011-03",1966443],["2011-04",1971724],["2011-05",1992181],["2011-06",2006469],["2011-07",2005694],["2011-08",2016180],["2011-09",2024126],["2011-10",2042390],["2011-11",2048170],["2011-12",2071643],["2012-01",2105455],["2012-02",2125048],["2012-03",2129445],["2012-04",2134321],["2012-05",2150433],["2012-06",2156088],["2012-07",2148513],["2012-08",2154670],["2012-09",2166428],["2012-10",2184812],["2012-11",2196931],["2012-12",2231335],["2013-01",2267755],["2013-02",2284228],["2013-03",2309747],["2013-04",2331095],["2013-05",2361739],["2013-06",2383622],["2013-07",2388464],["2013-08",2408753],["2013-09",2423098],["2013-10",2437540],["2013-11",2438298],["2013-12",2464413],["2014-01",2482939],["2014-02",2476013],["2014-03",2466721],["2014-04",2474521],["2014-05",2476470],["2014-06",2450935],["2014-07",2442356],["2014-08",2448043],["2014-09",2457636],["2014-10",2452595],["2014-11",2450032],["2014-12",2476380],["2015-01",2490526],["2015-02",2499407],["2015-03",2507022],["2015-04",2506556],["2015-05",2516633],["2015-06",2534335],["2015-07",2538428],["2015-08",2546117],["2015-09",2561591],["2015-10",2575009],["2015-11",2582991],["2015-12",2569332],["2016-01",2557218],["2016-02",2547811],["2016-03",2528798],["2016-04",2516555],["2016-05",2497179],["2016-06",2460306],["2016-07",2434430],["2016-08",2433025],["2016-09",2431415],["2016-10",2435864],["2016-11",2451919],["2016-12",2504165],["2017-01",2551588],["2017-02",2566772],["2017-03",2580491],["2017-04",2574150],["2017-05",2573336],["2017-06",2553105],["2017-07",2526647],["2017-08",2524566],["2017-09",2519630],["2017-10",2535994],["2017-11",2538300],["2017-12",2543258],["2018-01",2564643],["2018-02",2556164],["2018-03",2555599],["2018-04",2541711],["2018-05",2533169],["2018-06",2499340],["2018-07",2450017],["2018-08",2425205],["2018-09",2381867],["2018-10",2344099],["2018-11",2311744],["2018-12",2284617],["2019-01",2297116],["2019-02",2280853],["2019-03",2286281],["2019-04",2290984],["2019-05",2285964],["2019-06",2270642],["2019-07",2239813],["2019-08",2241145],["2019-09",2225057],["2019-10",2227097],["2019-11",2216866],["2019-12",2216369],["2020-01",2237811],["2020-02",2254461],["2020-03",2276253],["2020-04",2264022],["2020-05",2268544],["2020-06",2283117],["2020-07",2260357],["2020-08",2240205],["2020-09",2227910],["2020-10",2236529],["2020-11",2235407],["2020-12",2220097],["2021-01",2232100],["2021-02",2239338],["2021-03",2242557],["2021-04",2239991],["2021-05",2236196],["2021-06",2228669],["2021-07",2213528],["2021-08",2209325],["2021-09",2207408],["2021-10",2210100],["2021-11",2222031],["2021-12",2245390],["2022-01",2268648],["2022-02",2275988],["2022-03",2288612],["2022-04",2287909],["2022-05",2286867],["2022-06",2267529],["2022-07",2234900],["2022-08",2220953],["2022-09",2200992],["2022-10",2189981],["2022-11",2186897],["2022-12",2216748],["2023-01",2251077],["2023-02",2271764],["2023-03",2293523],["2023-04",2304043],["2023-05",2304972],["2023-06",2284705],["2023-07",2268844],["2023-08",2264704],["2023-09",2250625],["2023-10",2248794],["2023-11",2244335],["2023-12",2178029],["2024-01",2144521],["2024-02",2104294],["2024-03",2066430],["2024-04",2051264],["2024-05",2032509],["2024-06",2070538],["2024-07",2085829],["2024-08",2107172],["2024-09",2133199],["2024-10",2147454],["2024-11",2167584],["2024-12",2208058],["2025-01",2239468],["2025-02",2253649],["2025-03",2273857],["2025-04",2275325],["2025-05",2273970],["2025-06",2262997],["2025-07",2242156],["2025-08",2238191],["2025-09",2224216],["2025-10",2222180],["2025-11",2217337],["2025-12",2223147],["2026-01",2238547],["2026-02",2238053],["2026-03",2250587],["2026-04",2252211],["2026-05",2245512],["2026-06",2226650]],"real_correos":[["2002-06",1702958],["2002-07",1545745],["2002-08",1384375],["2002-09",1319964],["2002-10",1285748],["2002-11",1272992],["2002-12",1250201],["2003-01",1240148],["2003-02",1240470],["2003-03",1233376],["2003-04",1237030],["2003-05",1248192],["2003-06",1275962],["2003-07",1294113],["2003-08",1310619],["2003-09",1346026],["2003-10",1378246],["2003-11",1354681],["2003-12",1255452],["2004-01",1242163],["2004-02",1252985],["2004-03",1235763],["2004-04",1218850],["2004-05",1251247],["2004-06",1360073],["2004-07",1357217],["2004-08",1336096],["2004-09",1336104],["2004-10",1340439],["2004-11",1341400],["2004-12",1355268],["2005-01",1384763],["2005-02",1394895],["2005-03",1393527],["2005-04",1410508],["2005-05",1431755],["2005-06",1451725],["2005-07",1443356],["2005-08",1455768],["2005-09",1485455],["2005-10",1515382],["2005-11",1565884],["2005-12",1641099],["2006-01",1714526],["2006-02",1774585],["2006-03",1786218],["2006-04",1836479],["2006-05",1850589],["2006-06",1866587],["2006-07",1884955],["2006-08",1903566],["2006-09",1969562],["2006-10",1967475],["2006-11",1974686],["2006-12",1991299],["2007-01",1988968],["2007-02",1985306],["2007-03",1966996],["2007-04",1978473],["2007-05",1974760],["2007-06",1972793],["2007-07",1974483],["2007-08",1985426],["2007-09",2012586],["2007-10",2022664],["2007-11",2065687],["2007-12",2115890],["2008-01",2132959],["2008-02",2152454],["2008-03",2156958],["2008-04",2165597],["2008-05",2144970],["2008-06",2126737],["2008-07",2139963],["2008-08",2156926],["2008-09",2143174],["2008-10",2158793],["2008-11",2189534],["2008-12",2263120],["2009-01",2288485],["2009-02",2322597],["2009-03",2384024],["2009-04",2409224],["2009-05",2425801],["2009-06",2388809],["2009-07",2401161],["2009-08",2402884],["2009-09",2405775],["2009-10",2401662],["2009-11",2423461],["2009-12",2454509],["2010-01",2446917],["2010-02",2421909],["2010-03",2423804],["2010-04",2426432],["2010-05",2396183],["2010-06",2372993],["2010-07",2390137],["2010-08",2421757],["2010-09",2431321],["2010-10",2433313],["2010-11",2465538],["2010-12",2504081],["2011-01",2512316],["2011-02",2506239],["2011-03",2510713],["2011-04",2536506],["2011-05",2527241],["2011-06",2515559],["2011-07",2520981],["2011-08",2544211],["2011-09",2546928],["2011-10",2541365],["2011-11",2572479],["2011-12",2621974],["2012-01",2650315],["2012-02",2636868],["2012-03",2640727],["2012-04",2653944],["2012-05",2638505],["2012-06",2623782],["2012-07",2622867],["2012-08",2655771],["2012-09",2687504],["2012-10",2694082],["2012-11",2734212],["2012-12",2814215],["2013-01",2812033],["2013-02",2819852],["2013-03",2858008],["2013-04",2913624],["2013-05",2933158],["2013-06",2937322],["2013-07",2997299],["2013-08",3062962],["2013-09",3094516],["2013-10",3094359],["2013-11",3141046],["2013-12",3200326],["2014-01",3183719],["2014-02",3137778],["2014-03",3237711],["2014-04",3222491],["2014-05",3170131],["2014-06",3099028],["2014-07",3097485],["2014-08",3098133],["2014-09",2943309],["2014-10",2904850],["2014-11",2907366],["2014-12",2910842],["2015-01",2874273],["2015-02",2855427],["2015-03",2916577],["2015-04",2956980],["2015-05",2952675],["2015-06",2937478],["2015-07",2993423],["2015-08",3039094],["2015-09",3017517],["2015-10",3030060],["2015-11",3086930],["2015-12",3111027],["2016-01",3084190],["2016-02",3076974],["2016-03",3073862],["2016-04",3073395],["2016-05",3012220],["2016-06",2943205],["2016-07",2925520],["2016-08",2902311],["2016-09",2896913],["2016-10",2897452],["2016-11",2924533],["2016-12",3009369],["2017-01",3044967],["2017-02",3077012],["2017-03",3071716],["2017-04",3069972],["2017-05",3036002],["2017-06",2970042],["2017-07",2933338],["2017-08",2879029],["2017-09",2810103],["2017-10",2729421],["2017-11",2698635],["2017-12",2664605],["2018-01",2649511],["2018-02",2632385],["2018-03",2669776],["2018-04",2715516],["2018-05",2730082],["2018-06",2717224],["2018-07",2682849],["2018-08",2660690],["2018-09",2585223],["2018-10",2486743],["2018-11",2440695],["2018-12",2416140],["2019-01",2381046],["2019-02",2344923],["2019-03",2344491],["2019-04",2370436],["2019-05",2356158],["2019-06",2259958],["2019-07",2304993],["2019-08",2343647],["2019-09",2344666],["2019-10",2376914],["2019-11",2393737],["2019-12",2478663],["2020-01",2461890],["2020-02",2466972],["2020-03",2481389],["2020-04",2446805],["2020-05",2446688],["2020-06",2466759],["2020-07",2436684],["2020-08",2420535],["2020-09",2411385],["2020-10",2438997],["2020-11",2437060],["2020-12",2379485],["2021-01",2410061],["2021-02",2398231],["2021-03",2385781],["2021-04",2365164],["2021-05",2342075],["2021-06",2346465],["2021-07",2355216],["2021-08",2376771],["2021-09",2396906],["2021-10",2323904],["2021-11",2351803],["2021-12",2391833],["2022-01",2366379],["2022-02",2349810],["2022-03",2352519],["2022-04",2420129],["2022-05",2405160],["2022-06",2366004],["2022-07",2310820],["2022-08",2235194],["2022-09",2182268],["2022-10",2136524],["2022-11",2136165],["2022-12",2191495],["2023-01",2237319],["2023-02",2323697],["2023-03",2411697],["2023-04",2470726],["2023-05",2484069],["2023-06",2440260],["2023-07",2434663],["2023-08",2403318],["2023-09",2354283],["2023-10",2337357],["2023-11",2321426],["2023-12",2241064],["2024-01",2219891],["2024-02",2209320],["2024-03",2166227],["2024-04",2209135],["2024-05",2218967],["2024-06",2306657],["2024-07",2355103],["2024-08",2390293],["2024-09",2454294],["2024-10",2447771],["2024-11",2483872],["2024-12",2559537],["2025-01",2635922],["2025-02",2709638],["2025-03",2721755],["2025-04",2741577],["2025-05",2752521],["2025-06",2750119],["2025-07",2702571],["2025-08",2662186],["2025-09",2648652],["2025-10",2630153],["2025-11",2598856],["2025-12",2558901],["2026-01",2565767],["2026-02",2541648],["2026-03",2537112],["2026-04",2540313],["2026-05",2515080],["2026-06",2503118]]};
+
+/* ---------- utilidades ---------- */
+const nf = (d) => new Intl.NumberFormat('es-AR', { maximumFractionDigits: d, minimumFractionDigits: d });
+const fmtInt = (v) => nf(0).format(v);
+const fmtPct = (v, d = 0) => nf(d).format(v * 100) + '%';
+const fmtSgn = (v, d = 0) => (v > 0 ? '+' : v < 0 ? '−' : '') + nf(d).format(Math.abs(v) * 100) + '%';
+const fmtPesos = (v) => '$' + fmtInt(v);
+const fmtMill = (v, d = 1) => '$' + nf(d).format(v / 1e6) + ' M';
+const MES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const MESL = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const toDate = (p) => {
+  if (p.includes('Q')) { const [y, q] = p.split('-Q').map(Number); return new Date(y, (q - 1) * 3 + 1, 15); }
+  const [y, m] = p.split('-').map(Number); return new Date(y, m - 1, 15);
+};
+const lab = (p) => {
+  if (p.includes('Q')) { const [y, q] = p.split('-Q'); return q + '° trim. ' + y; }
+  const [y, m] = p.split('-').map(Number); return MES[m - 1] + '-' + String(y).slice(2);
+};
+const largo = (p) => {
+  if (p.includes('Q')) { const [y, q] = p.split('-Q'); return q + '° trimestre de ' + y; }
+  const [y, m] = p.split('-').map(Number); return MESL[m - 1] + ' de ' + y;
+};
+const tipMes = (d) => MES[d.getMonth()] + '-' + String(d.getFullYear()).slice(2);
+const tipTrim = (d) => (Math.floor(d.getMonth() / 3) + 1) + '° trim. ' + d.getFullYear();
+const NS = 'http://www.w3.org/2000/svg';
+const el = (tag, attrs = {}, parent) => {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+};
+const $ = (id) => document.getElementById(id);
+const setText = (id, t) => { const e = $(id); if (e) e.textContent = t; };
+const tip = $('tip');
+function niceTicks(min, max, n = 5) {
+  const mag = Math.pow(10, Math.floor(Math.log10((max - min) / n)));
+  const step = [1, 2, 2.5, 5, 10, 20].map(f => f * mag).find(s => Math.ceil(max / s) - Math.floor(min / s) <= n);
+  const t = []; for (let v = Math.floor(min / step) * step; v <= Math.ceil(max / step) * step + 1e-9; v += step) t.push(Math.round(v * 1e6) / 1e6);
+  return t;
+}
+function table(id, head, rows) {
+  const t = document.createElement('table');
+  t.innerHTML = '<thead><tr>' + head.map(h => `<th>${h}</th>`).join('') + '</tr></thead><tbody>' +
+    rows.map(r => '<tr>' + r.map(c => `<td>${c}</td>`).join('') + '</tr>').join('') + '</tbody>';
+  $(id).innerHTML = ''; $(id).appendChild(t);
+}
+function legend(id, items) {
+  $(id).innerHTML = items.map(it => `<span><i style="background:var(${it.c})"></i>${it.n}</span>`).join('');
+}
+
+/* ---------- grafico de lineas ---------- */
+function lineChart(id, o) {
+  const box = $(id);
+  box.innerHTML = '';
+  const W = Math.max(300, box.clientWidth), H = Math.round(Math.min(380, Math.max(240, W * 0.6)));
+  const m = { t: 14, r: o.endLabels ? 74 : 16, b: 28, l: o.yLabelW || 52 };
+  const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': o.aria || '' }, box);
+  const all = o.series.flatMap(s => s.pts);
+  const xs = all.map(p => p.x.getTime());
+  const x0 = Math.min(...xs), x1 = Math.max(...xs);
+  let ymax = Math.max(...all.map(p => p.y));
+  const ymin = o.yMin !== undefined ? o.yMin : Math.min(...all.map(p => p.y)) * 0.97;
+  const ticks = niceTicks(ymin, ymax * 1.02, 5);
+  ymax = ticks[ticks.length - 1];
+  const X = (d) => m.l + (d.getTime() - x0) / (x1 - x0) * (W - m.l - m.r);
+  const Y = (v) => H - m.b - (v - ticks[0]) / (ymax - ticks[0]) * (H - m.t - m.b);
+  // bandas
+  (o.bands || []).forEach(b => {
+    const a = X(b.x0), z = X(b.x1);
+    el('rect', { x: a, y: m.t, width: Math.max(2, z - a), height: H - m.t - m.b, fill: 'var(--band)' }, svg);
+    const t = el('text', { x: a - 4, y: m.t + 12, 'text-anchor': 'end', 'font-size': 11, fill: 'var(--ink-secondary)' }, svg); t.textContent = b.label;
+  });
+  // grilla
+  ticks.forEach(v => {
+    el('line', { x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), stroke: 'var(--line)', 'stroke-width': 1 }, svg);
+    const t = el('text', { x: m.l - 8, y: Y(v) + 4, 'text-anchor': 'end', 'font-size': 11, fill: 'var(--ink-muted)' }, svg);
+    t.textContent = o.yFmt(v);
+  });
+  // eje x: un rotulo cada 2 o 4 anios segun el ancho
+  const yA = new Date(x0).getFullYear(), yB = new Date(x1).getFullYear();
+  const stepY = (yB - yA) > 12 ? (W < 560 ? 4 : 2) : (yB - yA) > 6 ? 2 : 1;
+  for (let y = Math.ceil(yA / stepY) * stepY; y <= yB; y += stepY) {
+    const d = new Date(y, 0, 1); if (d.getTime() < x0) continue;
+    el('line', { x1: X(d), x2: X(d), y1: H - m.b, y2: H - m.b + 4, stroke: 'var(--line-strong)' }, svg);
+    const t = el('text', { x: X(d), y: H - 8, 'text-anchor': 'middle', 'font-size': 11, fill: 'var(--ink-muted)' }, svg); t.textContent = y;
+  }
+  el('line', { x1: m.l, x2: W - m.r, y1: H - m.b, y2: H - m.b, stroke: 'var(--line-strong)' }, svg);
+  // marcas verticales
+  (o.marks || []).forEach(mk => {
+    el('line', { x1: X(mk.x), x2: X(mk.x), y1: m.t, y2: H - m.b, stroke: 'var(--ink-muted)', 'stroke-width': 1, 'stroke-dasharray': '3 3' }, svg);
+    const t = el('text', { x: X(mk.x) + (mk.left ? -4 : 4), y: m.t + 12, 'text-anchor': mk.left ? 'end' : 'start', 'font-size': 11, fill: 'var(--ink-secondary)', 'font-weight': 600 }, svg);
+    t.textContent = mk.label;
+  });
+  // series
+  o.series.forEach(s => {
+    const d = s.pts.map((p, i) => `${i ? 'L' : 'M'}${X(p.x).toFixed(1)},${Y(p.y).toFixed(1)}`).join('');
+    el('path', { d, fill: 'none', stroke: `var(${s.c})`, 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }, svg);
+    (s.highlight || []).forEach(p => {
+      el('circle', { cx: X(p.x), cy: Y(p.y), r: 4, fill: 'var(--surface)', stroke: `var(${s.c})`, 'stroke-width': 2 }, svg);
+      const t = el('text', { x: X(p.x), y: Y(p.y) + (p.below ? 18 : -10), 'text-anchor': p.anchor || 'middle', 'font-size': 11.5, 'font-weight': 600, fill: 'var(--ink)' }, svg);
+      t.textContent = p.label;
+    });
+    const last = s.pts[s.pts.length - 1];
+    el('circle', { cx: X(last.x), cy: Y(last.y), r: 4.5, fill: `var(${s.c})`, stroke: 'var(--surface)', 'stroke-width': 2 }, svg);
+    if (o.endLabels) {
+      const t = el('text', { x: X(last.x) + 8, y: Y(last.y) + 4 + (s.dy || 0), 'font-size': 12, 'font-weight': 600, fill: 'var(--ink)' }, svg);
+      t.textContent = o.yFmt(last.y, true);
+    }
+  });
+  // hover
+  const keys = [...new Set(all.map(p => p.x.getTime()))].sort((a, b) => a - b);
+  const cross = el('line', { y1: m.t, y2: H - m.b, stroke: 'var(--line-strong)', 'stroke-width': 1, visibility: 'hidden' }, svg);
+  const hit = el('rect', { x: m.l, y: m.t, width: W - m.l - m.r, height: H - m.t - m.b, fill: 'transparent' }, svg);
+  const move = (ev) => {
+    const rect = svg.getBoundingClientRect(), sx = (ev.clientX - rect.left) * W / rect.width;
+    const tx = x0 + (sx - m.l) / (W - m.l - m.r) * (x1 - x0);
+    const k = keys.reduce((a, b) => Math.abs(b - tx) < Math.abs(a - tx) ? b : a);
+    const xk = X(new Date(k));
+    cross.setAttribute('x1', xk); cross.setAttribute('x2', xk); cross.setAttribute('visibility', 'visible');
+    const rows = o.series.map(s => { const p = s.pts.find(q => q.x.getTime() === k); return p ? `<div class="r"><span><i style="background:var(${s.c})"></i>${s.n}</span><b>${o.yFmt(p.y, true, true)}</b></div>` : ''; }).join('');
+    const extra = o.tipExtra ? o.tipExtra(k) : '';
+    tip.innerHTML = `<div class="t">${o.tipTitle(new Date(k))}</div>${rows}${extra}`;
+    tip.style.display = 'block';
+    const br = box.getBoundingClientRect();
+    let left = ev.clientX - br.left + 14; if (left + 230 > br.width) left = ev.clientX - br.left - 240;
+    tip.style.left = (box.offsetLeft + left) + 'px';
+    tip.style.top = (box.offsetTop + Math.max(0, ev.clientY - br.top - 30)) + 'px';
+    box.parentElement.appendChild(tip);
+  };
+  hit.addEventListener('pointermove', move);
+  hit.addEventListener('pointerleave', () => { tip.style.display = 'none'; cross.setAttribute('visibility', 'hidden'); });
+}
+
+/* ---------- armado ---------- */
+const pts = (arr) => arr.map(([p, v]) => ({ x: toDate(p), y: v, p }));
+const at = (arr, p) => { const r = arr.find(q => q[0] === p); return r ? r[1] : null; };
+const argmax = (arr) => arr.reduce((a, b) => b[1] > a[1] ? b : a);
+const argmin = (arr) => arr.reduce((a, b) => b[1] < a[1] ? b : a);
+const yFmtMill = (v, full, tipMode) => tipMode ? fmtPesos(v) : full ? fmtMill(v, 2) : fmtMill(v, 1);
+
+function render() {
+  const ET = DATA.emp_total, EC = DATA.emp_correos, RT = DATA.real_total, RC = DATA.real_correos;
+
+  // 3. empleo total
+  const etLast = ET[ET.length - 1], etPico = argmax(ET);
+  const [yL, qL] = etLast[0].split('-Q');
+  const etHace3 = at(ET, (yL - 3) + '-Q' + qL);
+  setText('et-lab', 'Asalariados privados, ' + lab(etLast[0]));
+  setText('et-v', fmtInt(etLast[1]));
+  setText('et-d', 'máximo: ' + fmtInt(etPico[1]) + ' en el ' + lab(etPico[0]));
+  setText('et-loss-lab', 'Puestos menos que en el ' + lab((yL - 3) + '-Q' + qL));
+  setText('et-loss', '−' + fmtInt(etHace3 - etLast[1]));
+  setText('et-loss-d', fmtSgn(etLast[1] / etHace3 - 1, 1) + ' en tres años');
+  setText('et-pico', largo(etPico[0]));
+  setText('et-ult', largo(etLast[0]));
+  setText('et-yoy', fmtInt(etHace3 - etLast[1]));
+  setText('sx-et', fmtInt(etHace3 - etLast[1]));
+  lineChart('ch-et', {
+    aria: 'Asalariados registrados del sector privado en Santa Fe por trimestre',
+    series: [{ n: 'Asalariados', c: '--s1', pts: pts(ET),
+      highlight: [{ x: toDate(etPico[0]), y: etPico[1], label: 'Máximo: ' + fmtInt(etPico[1]), anchor: 'end' }] }],
+    endLabels: true, yLabelW: 60,
+    yFmt: (v, full) => full ? nf(0).format(v / 1e3) + ' mil' : fmtInt(v),
+    tipTitle: tipTrim,
+  });
+  table('tb-et', ['Trimestre', 'Asalariados'], ET.slice().reverse().map(r => [lab(r[0]), fmtInt(r[1])]));
+
+  // 4. empleo correos
+  const ecLast = EC[EC.length - 1];
+  const ecPost = EC.filter(r => r[0] >= '2022');
+  const ecMin = argmin(ecPost);
+  const ec1021 = EC.filter(r => r[0] >= '2010' && r[0] < '2022');
+  const prom = ec1021.reduce((a, r) => a + r[1], 0) / ec1021.length;
+  setText('ec-22', fmtInt(at(EC, '2022-Q1')));
+  setText('ec-min', fmtInt(ecMin[1])); setText('ec-min-q', largo(ecMin[0]));
+  setText('ec-ult', fmtInt(ecLast[1])); setText('ec-ult-q', largo(ecLast[0]));
+  setText('ec-rec', fmtPct(ecLast[1] / ecMin[1] - 1));
+  setText('ec-vs', fmtPct(1 - ecLast[1] / prom));
+  setText('sx-ec', fmtPct(1 - ecLast[1] / prom));
+  lineChart('ch-ec', {
+    aria: 'Asalariados registrados en servicios de correos en Santa Fe',
+    series: [{ n: 'Asalariados en correos', c: '--s2', pts: pts(EC),
+      highlight: [{ x: toDate(ecMin[0]), y: ecMin[1], label: 'Piso: ' + fmtInt(ecMin[1]), below: true }] }],
+    yMin: 0, endLabels: true, yFmt: (v) => fmtInt(v),
+    tipTitle: tipTrim,
+  });
+  table('tb-ec', ['Trimestre', 'Asalariados'], EC.slice().reverse().map(r => [lab(r[0]), fmtInt(r[1])]));
+
+  // 5. salario real total
+  const rtLast = RT[RT.length - 1], rtPico = argmax(RT);
+  const rtNov23 = at(RT, '2023-11');
+  const rtMin24 = argmin(RT.filter(r => r[0] >= '2023-12' && r[0] <= '2024-12'));
+  setText('rt-vs15', fmtPct(1 - rtLast[1] / rtPico[1]));
+  setText('sx-rt', fmtPct(1 - rtLast[1] / rtPico[1]));
+  setText('rt-pico', largo(rtPico[0]));
+  setText('rt-caida', fmtPct(1 - rtMin24[1] / rtNov23));
+  setText('rt-ult', largo(rtLast[0]));
+  setText('rt-vs23', fmtSgn(rtLast[1] / rtNov23 - 1));
+  lineChart('ch-rt', {
+    aria: 'Salario real promedio del sector privado registrado en Santa Fe',
+    series: [{ n: 'Salario real', c: '--s1', pts: pts(RT),
+      highlight: [{ x: toDate(rtPico[0]), y: rtPico[1], label: 'Máximo ' + lab(rtPico[0]) }] }],
+    marks: [{ x: toDate('2023-12'), label: 'Dic-23', left: true }],
+    endLabels: true, yLabelW: 60, yFmt: yFmtMill,
+    tipTitle: tipMes,
+  });
+  table('tb-rt', ['Mes', 'Salario real ($ jun-26)'], RT.slice().reverse().map(r => [lab(r[0]), fmtPesos(r[1])]));
+
+  // 6. salario real correos
+  const rcLast = RC[RC.length - 1], rcPico = argmax(RC);
+  const rcMin = argmin(RC.filter(r => r[0] >= '2009'));
+  const rcMax25 = argmax(RC.filter(r => r[0] >= '2024'));
+  setText('rc-vs14', fmtPct(1 - rcLast[1] / rcPico[1]));
+  setText('rc-pico', largo(rcPico[0]));
+  setText('rc-min-p', largo(rcMin[0]));
+  setText('rc-max25-p', largo(rcMax25[0]));
+  setText('rc-caida25', fmtSgn(rcLast[1] / rcMax25[1] - 1));
+  lineChart('ch-rc', {
+    aria: 'Salario real promedio en servicios de correos en Santa Fe',
+    series: [{ n: 'Salario real correos', c: '--s2', pts: pts(RC),
+      highlight: [{ x: toDate(rcPico[0]), y: rcPico[1], label: 'Máximo ' + lab(rcPico[0]) },
+                  { x: toDate(rcMin[0]), y: rcMin[1], label: 'Piso ' + lab(rcMin[0]), below: true }] }],
+    marks: [{ x: toDate('2023-12'), label: 'Dic-23', left: true }],
+    endLabels: true, yLabelW: 60, yFmt: yFmtMill,
+    tipTitle: tipMes,
+  });
+  table('tb-rc', ['Mes', 'Salario real ($ jun-26)'], RC.slice().reverse().map(r => [lab(r[0]), fmtPesos(r[1])]));
+
+  // 7. comparacion
+  const prem = (p) => at(RC, p) / at(RT, p) - 1;
+  const RC2 = RC.filter(r => at(RT, r[0]) !== null);
+  const p0 = '2011-12';
+  const prMax = RC2.reduce((a, r) => prem(r[0]) > prem(a[0]) ? r : a);
+  setText('pr-ult-p', lab(rcLast[0]));
+  setText('pr-ult', fmtSgn(prem(rcLast[0])));
+  setText('pr-hist', 'en ' + lab(p0) + ' era ' + fmtSgn(prem(p0)));
+  setText('pr-p0', 'diciembre de 2011');
+  setText('pr-v0', fmtPct(prem(p0)));
+  const K = [{ n: 'Correos', c: '--s2' }, { n: 'Total sector privado', c: '--s1' }];
+  legend('lg-comp', K);
+  lineChart('ch-comp', {
+    aria: 'Salario real en correos y en el total del sector privado de Santa Fe',
+    series: [{ n: 'Correos', c: '--s2', pts: pts(RC2), dy: -6 },
+             { n: 'Total', c: '--s1', pts: pts(RT), dy: 8 }],
+    endLabels: true, yLabelW: 60, yFmt: yFmtMill,
+    tipTitle: tipMes,
+    tipExtra: (k) => { const p = RC2.find(r => toDate(r[0]).getTime() === k); return p ? `<div class="r"><span>Diferencia</span><b>${fmtSgn(prem(p[0]))}</b></div>` : ''; },
+  });
+  table('tb-comp', ['Mes', 'Correos', 'Total', 'Diferencia'], RC2.slice().reverse().map(r => [lab(r[0]), fmtPesos(r[1]), fmtPesos(at(RT, r[0])), fmtSgn(prem(r[0]))]));
+}
+
+/* ---------- navegacion ---------- */
+const slides = [...document.querySelectorAll('section.slide')];
+const counter = $('counter'), bar = $('progress');
+let cur = 0;
+counter.textContent = `1 / ${slides.length}`;
+const io = new IntersectionObserver((ents) => {
+  ents.forEach(e => { if (e.isIntersecting) { cur = slides.indexOf(e.target); counter.textContent = `${cur + 1} / ${slides.length}`; bar.style.width = ((cur + 1) / slides.length * 100) + '%'; } });
+}, { threshold: 0.55 });
+slides.forEach(s => io.observe(s));
+const go = (i) => slides[Math.max(0, Math.min(slides.length - 1, i))].scrollIntoView({ behavior: 'smooth' });
+$('prev').onclick = () => go(cur - 1);
+$('next').onclick = () => go(cur + 1);
+document.addEventListener('keydown', (e) => {
+  if (e.target.closest && e.target.closest('details')) return;
+  if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); go(cur + 1); }
+  if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) { e.preventDefault(); go(cur - 1); }
+  if (e.key === 'Home') go(0);
+  if (e.key === 'End') go(slides.length - 1);
+});
+$('theme').onclick = () => {
+  const r = document.documentElement, dark = r.dataset.theme ? r.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  r.dataset.theme = dark ? 'light' : 'dark';
+  try { localStorage.setItem('correos-theme', r.dataset.theme); } catch (e) {}
+};
+try { const t = localStorage.getItem('correos-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+
+render();
+let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(render, 150); });
+</script>
+</body>
+</html>
